@@ -95,24 +95,7 @@ function SearchResults({ apiParams }: { apiParams: ApiParams }) {
     <Grid container spacing={2}>
       {results !== null ? (
         results.map((result, index) => (
-          <Grid item xs={12} key={index}>
-            <Typography variant="h6" gutterBottom>
-              <Link
-                href={result.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {result.title}
-              </Link>
-            </Typography>
-            <Typography variant="subtitle1" component="div">
-              {" "}
-              {/* 여기서 Typography 대신에 component="div"를 사용하여 <div> 요소를 사용합니다. */}
-              Site: {result.site} | Date: {result.date} | Emotion:{" "}
-              {result.emotion}
-            </Typography>
-            <Typography variant="body1">{result.text}</Typography>
-          </Grid>
+          <SearchResultItem result={result} key={index} />
         ))
       ) : (
         <Grid item xs={12}>
@@ -122,5 +105,25 @@ function SearchResults({ apiParams }: { apiParams: ApiParams }) {
     </Grid>
   );
 }
+
+interface SearchResultItemProps {
+  result: SearchResult;
+}
+
+const SearchResultItem: React.FC<SearchResultItemProps> = ({ result }) => (
+  <Grid item xs={12}>
+    <Typography variant="h6" gutterBottom>
+      <Link href={result.link} target="_blank" rel="noopener noreferrer">
+        {result.title}
+      </Link>
+    </Typography>
+    <Typography variant="subtitle1" component="div">
+      {" "}
+      {/* 여기서 Typography 대신에 component="div"를 사용하여 <div> 요소를 사용합니다. */}
+      Site: {result.site} | Date: {result.date} | Emotion: {result.emotion}
+    </Typography>
+    <Typography variant="body1">{result.text}</Typography>
+  </Grid>
+);
 
 export default SearchResults;

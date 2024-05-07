@@ -15,11 +15,11 @@ interface AnalysisData {
   [key: string]: number;
 }
 
-interface AnalysisGraphProps {
+interface AnalysisInfoProps {
   analysisData: AnalysisData;
 }
 
-class AnalysisGraph extends React.Component<AnalysisGraphProps> {
+class AnalysisInfo extends React.Component<AnalysisInfoProps> {
   render() {
     const { analysisData } = this.props;
     const data = Object.entries(analysisData).map(([emotion, value]) => ({
@@ -54,4 +54,4 @@ class AnalysisGraph extends React.Component<AnalysisGraphProps> {
   }
 }
 
-export default AnalysisGraph;
+export default AnalysisInfo;
