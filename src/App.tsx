@@ -23,8 +23,11 @@ import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import SearchIcon from "@mui/icons-material/Search";
 import AnalysisInfo from "./components/analysisInfo";
 import SearchResults from "./components/searchResults";
-
+import getLPTheme from "./../theme";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+// MUI에서 ThemeProvider 가져오기
 function App() {
+  const theme = createTheme(getLPTheme("light"));
   const targetOptions = ["Community1", "Community2", "Community3"];
   const analysisData = {
     Happy: 80,
@@ -114,191 +117,201 @@ function App() {
 
   return (
     <div>
-      <AppBar position="fixed">
-        <Toolbar>
-          <Typography variant="h6" style={{ flexGrow: 1 }}>
-            <img src="/logo.svg" alt="Logo" style={{ marginRight: "10px" }} />{" "}
-            test_name
-          </Typography>
-          {!loginStatus && (
-            <Button color="inherit" onClick={handleLogin}>
-              Login
-            </Button>
-          )}
-          {loginStatus && (
-            <div>
-              <Button color="inherit">MyPage</Button>
-              <Button color="inherit" onClick={handleLogout}>
-                Logout
+      <ThemeProvider theme={theme}>
+        <AppBar position="fixed">
+          <Toolbar>
+            <Typography variant="h6" style={{ flexGrow: 1 }}>
+              <img src="/logo.svg" alt="Logo" style={{ marginRight: "10px" }} />{" "}
+              test_name
+            </Typography>
+            {!loginStatus && (
+              <Button color="inherit" onClick={handleLogin}>
+                Login
               </Button>
-            </div>
-          )}
-        </Toolbar>
-      </AppBar>
-      <Toolbar /> {/* AppBar가 다른 컨텐츠를 덮지 않도록 공간 확보 */}
-      <Container
-        style={{
-          marginTop: "80px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Grid container spacing={2} justifyContent="center" alignItems="center">
-          <Grid xs={10}>
-            <TextField
-              label="Search Keyword"
-              variant="outlined"
-              fullWidth
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              style={{ marginBottom: "20px" }}
-            />
-          </Grid>
-          <Grid xs={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<SearchIcon />}
-              onClick={handleSearch}
-              style={{ marginBottom: "20px", height: "100%" }}
-            >
-              Search
-            </Button>
-          </Grid>
-          <Grid xs={6}>
-            <Button
-              variant="outlined"
-              onClick={() => setOpenDateDialog(true)}
-              style={{
-                marginLeft: "10px",
-                marginBottom: "20px",
-                width: "100%",
-              }}
-            >
-              Select Date Range
-            </Button>
-          </Grid>
-          <Grid xs={6}>
-            <Button
-              variant="outlined"
-              onClick={() => setOpenTargetDialog(true)}
-              style={{
-                marginLeft: "10px",
-                marginBottom: "20px",
-                width: "100%",
-              }}
-            >
-              Select Target
-            </Button>
-          </Grid>
-          <Grid xs={12}>
-            Selected Date Range:{" "}
-            <Chip
-              label={selectedDateRange}
-              variant="outlined"
-              style={{ marginLeft: "8px" }}
-            />
-          </Grid>
-          <Grid xs={12}>
-            Selected Targets:{" "}
-            {selectedTargets.map((target) => (
+            )}
+            {loginStatus && (
+              <div>
+                <Button color="inherit">MyPage</Button>
+                <Button color="inherit" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </div>
+            )}
+          </Toolbar>
+        </AppBar>
+        <Toolbar /> {/* AppBar가 다른 컨텐츠를 덮지 않도록 공간 확보 */}
+        <Container
+          style={{
+            marginTop: "80px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Grid
+            container
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Grid xs={10}>
+              <TextField
+                label="Search Keyword"
+                variant="outlined"
+                fullWidth
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                style={{ marginBottom: "20px" }}
+              />
+            </Grid>
+            <Grid xs={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<SearchIcon />}
+                onClick={handleSearch}
+                style={{ marginBottom: "20px", height: "100%" }}
+              >
+                Search
+              </Button>
+            </Grid>
+            <Grid xs={6}>
+              <Button
+                variant="outlined"
+                onClick={() => setOpenDateDialog(true)}
+                style={{
+                  marginLeft: "10px",
+                  marginBottom: "20px",
+                  width: "100%",
+                }}
+              >
+                Select Date Range
+              </Button>
+            </Grid>
+            <Grid xs={6}>
+              <Button
+                variant="outlined"
+                onClick={() => setOpenTargetDialog(true)}
+                style={{
+                  marginLeft: "10px",
+                  marginBottom: "20px",
+                  width: "100%",
+                }}
+              >
+                Select Target
+              </Button>
+            </Grid>
+            <Grid xs={12}>
+              Selected Date Range:{" "}
               <Chip
-                key={target}
-                label={target}
+                label={selectedDateRange}
                 variant="outlined"
                 style={{ marginLeft: "8px" }}
               />
-            ))}
+            </Grid>
+            <Grid xs={12}>
+              Selected Targets:{" "}
+              {selectedTargets.map((target) => (
+                <Chip
+                  key={target}
+                  label={target}
+                  variant="outlined"
+                  style={{ marginLeft: "8px" }}
+                />
+              ))}
+            </Grid>
           </Grid>
-        </Grid>
-        {/*검색창 파트 끝*/}
-        <div>
-          <Typography variant="h4">Analysis Information</Typography>
-          <AnalysisInfo analysisData={analysisData} />
-        </div>
-        <div>
-          <h1>Search Results on Another Page</h1>
-          <SearchResults apiParams="test" />
-        </div>
-        <Dialog open={openDateDialog} onClose={handleDateDialogClose}>
-          <DialogTitle>Select Date Range</DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Start Date"
-              type="datetime-local"
-              value={startDate || defaultStartDate || today}
-              onChange={(e) => setStartDate(e.target.value)}
-              fullWidth
-              style={{ marginBottom: "10px" }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <TextField
-              label="End Date"
-              type="datetime-local"
-              value={endDate || defaultEndDate || today}
-              onChange={(e) => setEndDate(e.target.value)}
-              fullWidth
-              style={{ marginBottom: "10px" }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDateDialogClose}>Cancel</Button>
-            <Button onClick={handleDateDialogClose} color="primary">
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog>
-        {loadingTargets ? (
-          <p>Loading Targets...</p>
-        ) : (
+          {/*검색창 파트 끝*/}
           <div>
-            {targetList.length > 0 && (
-              <Dialog open={openTargetDialog} onClose={handleTargetDialogClose}>
-                <DialogTitle>Select Target</DialogTitle>
-                <DialogContent>
-                  <FormControl fullWidth>
-                    <InputLabel>Select Target</InputLabel>
-                    <Select
-                      multiple
-                      value={selectedTargets}
-                      onChange={(e) =>
-                        setSelectedTargets(e.target.value as string[])
-                      }
-                      renderValue={(selected) =>
-                        (selected as string[]).join(", ")
-                      }
-                      input={<Input />}
-                      MenuProps={MenuProps}
-                    >
-                      {targetList.map((target) => (
-                        <MenuItem key={target} value={target}>
-                          <Checkbox
-                            checked={selectedTargets.indexOf(target) > -1}
-                          />
-                          <ListItemText primary={target} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleTargetDialogClose}>Cancel</Button>
-                  <Button onClick={handleTargetDialogClose} color="primary">
-                    Ok
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            )}
+            <Typography variant="h4">Analysis Information</Typography>
+            <AnalysisInfo analysisData={analysisData} />
           </div>
-        )}
-      </Container>
+          <div>
+            <h1>Search Results on Another Page</h1>
+            <SearchResults apiParams="test" />
+          </div>
+          <Dialog open={openDateDialog} onClose={handleDateDialogClose}>
+            <DialogTitle>Select Date Range</DialogTitle>
+            <DialogContent>
+              <TextField
+                label="Start Date"
+                type="datetime-local"
+                value={startDate || defaultStartDate || today}
+                onChange={(e) => setStartDate(e.target.value)}
+                fullWidth
+                style={{ marginBottom: "10px" }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                label="End Date"
+                type="datetime-local"
+                value={endDate || defaultEndDate || today}
+                onChange={(e) => setEndDate(e.target.value)}
+                fullWidth
+                style={{ marginBottom: "10px" }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDateDialogClose}>Cancel</Button>
+              <Button onClick={handleDateDialogClose} color="primary">
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
+          {loadingTargets ? (
+            <p>Loading Targets...</p>
+          ) : (
+            <div>
+              {targetList.length > 0 && (
+                <Dialog
+                  open={openTargetDialog}
+                  onClose={handleTargetDialogClose}
+                >
+                  <DialogTitle>Select Target</DialogTitle>
+                  <DialogContent>
+                    <FormControl fullWidth>
+                      <InputLabel>Select Target</InputLabel>
+                      <Select
+                        multiple
+                        value={selectedTargets}
+                        onChange={(e) =>
+                          setSelectedTargets(e.target.value as string[])
+                        }
+                        renderValue={(selected) =>
+                          (selected as string[]).join(", ")
+                        }
+                        input={<Input />}
+                        MenuProps={MenuProps}
+                      >
+                        {targetList.map((target) => (
+                          <MenuItem key={target} value={target}>
+                            <Checkbox
+                              checked={selectedTargets.indexOf(target) > -1}
+                            />
+                            <ListItemText primary={target} />
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleTargetDialogClose}>Cancel</Button>
+                    <Button onClick={handleTargetDialogClose} color="primary">
+                      Ok
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              )}
+            </div>
+          )}
+        </Container>
+      </ThemeProvider>
     </div>
   );
 }
