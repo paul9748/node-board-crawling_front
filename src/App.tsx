@@ -19,12 +19,12 @@ import SearchResults from "./components/SearchResults";
 function App() {
   const theme = createTheme(getLPTheme("light"));
   const targetOptions = ["Community1", "Community2", "Community3"];
-  const analysisData = {
-    Happy: 80,
-    Sad: 20,
-    Angry: 10,
-    Surprised: 50,
-  };
+  // const analysisData = {
+  //   Happy: 80,
+  //   Sad: 20,
+  //   Angry: 10,
+  //   Surprised: 50,
+  // };
 
   const today = new Date().toISOString().slice(0, 16);
 
@@ -41,6 +41,8 @@ function App() {
   const [selectedDateRange, setSelectedDateRange] = useState("");
   const [targetList, setTargetList] = useState<string[]>([]);
   const [searched, setSearched] = useState(false); // 검색 버튼을 클릭했는지 여부를 나타내는 상태
+  const [analysisData, setAnalysisData] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
   useEffect(() => {
     const sevenDaysAgo = new Date();
@@ -66,7 +68,18 @@ function App() {
 
   const handleSearch = () => {
     setSelectedDateRange(`${startDate} ~ ${endDate}`);
-    setSearched(true); // 검색 버튼을 클릭했음을 나타내는 상태를 true로 설정
+    setSearched(true);
+    // 검색 요청
+    fetch(`http://localhost:3000/test2?keyword=${searchKeyword}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // 받은 데이터 중 검색 결과와 분석 정보를 추출하여 상태에 저장
+        setSearchResults(data.posts);
+        setAnalysisData(data.analysis);
+      })
+      .catch((error) => {
+        console.error("Error searching:", error);
+      });
   };
 
   return (
@@ -147,7 +160,7 @@ function App() {
         {searched && (
           <>
             <AnalysisInfo analysisData={analysisData} />
-            <SearchResults apiParams="test" />
+            <SearchResults searchResults={searchResults} />
           </>
         )}
         <DateRangeDialog

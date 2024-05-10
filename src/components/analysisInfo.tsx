@@ -11,21 +11,20 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface AnalysisData {
-  [key: string]: number;
+interface AnalysisResult {
+  key_columns: string;
+  total_val_columns: number;
+  percent_total: number;
+  total_sum: number;
 }
 
 interface AnalysisInfoProps {
-  analysisData: AnalysisData;
+  analysisData: AnalysisResult[];
 }
 
 class AnalysisInfo extends React.Component<AnalysisInfoProps> {
   render() {
     const { analysisData } = this.props;
-    const data = Object.entries(analysisData).map(([emotion, value]) => ({
-      emotion,
-      value,
-    }));
 
     return (
       <Grid container justifyContent="center">
@@ -37,15 +36,15 @@ class AnalysisInfo extends React.Component<AnalysisInfoProps> {
         <Grid item xs={12}>
           <ResponsiveContainer width="100%" height={400}>
             <BarChart
-              data={data}
+              data={analysisData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="emotion" />
+              <XAxis dataKey="key_columns" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="value" fill="#8884d8" />
+              <Bar dataKey="percent_total" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
         </Grid>
