@@ -27,7 +27,9 @@ const DateRangeDialog: React.FC<DateRangeDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Select Date Range</DialogTitle>
+      <DialogTitle style={{ marginTop: 10, marginBottom: 10 }}>
+        Select Date Range
+      </DialogTitle>
       <DialogContent>
         <TextField
           label="Start Date"
@@ -35,7 +37,7 @@ const DateRangeDialog: React.FC<DateRangeDialogProps> = ({
           value={startDate}
           onChange={(e) => onStartDateChange(e.target.value)}
           fullWidth
-          style={{ marginBottom: "10px" }}
+          style={{ marginTop: 10, marginBottom: 10 }}
           InputLabelProps={{
             shrink: true,
           }}
@@ -46,7 +48,7 @@ const DateRangeDialog: React.FC<DateRangeDialogProps> = ({
           value={endDate}
           onChange={(e) => onEndDateChange(e.target.value)}
           fullWidth
-          style={{ marginBottom: "10px" }}
+          style={{ marginTop: 10, marginBottom: 10 }}
           InputLabelProps={{
             shrink: true,
           }}

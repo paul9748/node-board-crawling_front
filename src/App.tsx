@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Grid,
-  Button,
-  Box,
-  Chip,
-} from "@mui/material";
+import { AppBar, Toolbar, Typography, Grid, Button, Chip } from "@mui/material";
 import SearchBar from "./components/SearchBar";
 import DateRangeDialog from "./components/DateRangeDialog";
 import TargetDialog from "./components/TargetDialog";
@@ -18,13 +10,8 @@ import SearchResults from "./components/SearchResults";
 
 function App() {
   const theme = createTheme(getLPTheme("light"));
-  const targetOptions = ["Community1", "Community2", "Community3"];
-  // const analysisData = {
-  //   Happy: 80,
-  //   Sad: 20,
-  //   Angry: 10,
-  //   Surprised: 50,
-  // };
+  // 기존의 하드코딩된 targetOptions 제거
+  // const targetOptions = ["Community1", "Community2", "Community3"];
 
   const today = new Date().toISOString().slice(0, 16);
 
@@ -33,9 +20,7 @@ function App() {
   const [endDate, setEndDate] = useState(today);
   const [openDateDialog, setOpenDateDialog] = useState(false);
   const [openTargetDialog, setOpenTargetDialog] = useState(false);
-  const [selectedTargets, setSelectedTargets] = useState<string[]>([
-    "Community1",
-  ]);
+  const [selectedTargets, setSelectedTargets] = useState<string[]>([]);
   const [loadingTargets, setLoadingTargets] = useState(false);
   const [defaultStartDate, setDefaultStartDate] = useState("");
   const [selectedDateRange, setSelectedDateRange] = useState("");
@@ -50,7 +35,6 @@ function App() {
     setStartDate(sevenDaysAgo.toISOString().slice(0, 16));
     const defaultStartDateFormat = sevenDaysAgo.toISOString().slice(0, 16);
     setDefaultStartDate(defaultStartDateFormat);
-    fetchTargetList();
   }, []);
 
   useEffect(() => {
@@ -58,28 +42,53 @@ function App() {
     setSelectedDateRange(formattedDateRange);
   }, [startDate, endDate, selectedTargets]);
 
+  useEffect(() => {
+    if (openTargetDialog) {
+      fetchTargetList();
+    }
+  }, [openTargetDialog]);
+
   const fetchTargetList = () => {
     setLoadingTargets(true);
-    setTimeout(() => {
-      setTargetList(targetOptions);
-      setLoadingTargets(false);
-    }, 1000);
+    fetch("http://localhost:3000/test6")
+      .then((response) => response.json())
+      .then((data) => {
+        const targetOptions = data.map((item: any) => item.siteName);
+        setTargetList(targetOptions);
+        setLoadingTargets(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching target list:", error);
+        setLoadingTargets(false);
+      });
   };
 
   const handleSearch = () => {
-    setSelectedDateRange(`${startDate} ~ ${endDate}`);
-    setSearched(true);
-    // 검색 요청
-    fetch(`http://localhost:3000/test2?keyword=${searchKeyword}`)
-      .then((response) => response.json())
-      .then((data) => {
-        // 받은 데이터 중 검색 결과와 분석 정보를 추출하여 상태에 저장
-        setSearchResults(data.posts);
-        setAnalysisData(data.analysis);
-      })
-      .catch((error) => {
-        console.error("Error searching:", error);
-      });
+    if (!searchKeyword) {
+      //error popup "keyword can not null"
+      alert("keyword can not null");
+    } else {
+      // 검색 요청
+      setSelectedDateRange(`${startDate} ~ ${endDate}`);
+      let search_data = `http://localhost:3000/test2?keyword=${searchKeyword}`;
+      if (startDate) {
+        search_data += `&startDate=${startDate}`;
+      }
+      if (endDate) {
+        search_data += `&endDate=${endDate}`;
+      }
+      fetch(search_data)
+        .then((response) => response.json())
+        .then((data) => {
+          // 받은 데이터 중 검색 결과와 분석 정보를 추출하여 상태에 저장
+          setSearchResults(data.posts);
+          setAnalysisData(data.analysis);
+          setSearched(true);
+        })
+        .catch((error) => {
+          console.error("Error searching:", error);
+        });
+    }
   };
 
   return (
@@ -93,22 +102,58 @@ function App() {
         }}
       >
         <AppBar position="fixed">
-          <Toolbar>
-            <Typography variant="h6" style={{ flexGrow: 1 }}>
-              <img src="/logo.svg" alt="Logo" style={{ marginRight: "10px" }} />{" "}
+          <Toolbar
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                src="src/assets/logo.png"
+                alt="Logo"
+                style={{
+                  marginRight: "10px",
+                  width: "40px", // 원하는 너비로 조절
+                  height: "40px", // 원하는 높이로 조절
+                  borderRadius: "50%", // 둥근 모서리
+                }}
+              />
               test_name
             </Typography>
           </Toolbar>
         </AppBar>
         <Toolbar />
-        <Grid container justifyContent="center">
-          <Grid item xs={12} md={6}>
+        <Grid container justifyContent="center" alignItems="center" spacing={2}>
+          <Grid
+            item
+            xs={12}
+            style={{ display: "flex", justifyContent: "center" }}
+          >
             <SearchBar
               searchKeyword={searchKeyword}
               onSearchKeywordChange={setSearchKeyword}
               onSearch={handleSearch}
             />
-            <Grid item xs={12} md={6}>
+          </Grid>
+          <Grid
+            container
+            item
+            xs={12}
+            spacing={2}
+            justifyContent="center"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <Grid
+              item
+              xs={12}
+              md={3}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
               <Button
                 variant="outlined"
                 onClick={() => setOpenDateDialog(true)}
@@ -121,7 +166,12 @@ function App() {
                 Select Date Range
               </Button>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              item
+              xs={12}
+              md={3}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
               <Button
                 variant="outlined"
                 onClick={() => setOpenTargetDialog(true)}
@@ -134,25 +184,33 @@ function App() {
                 Select Target
               </Button>
             </Grid>
-            <Grid item xs={12}>
-              Selected Date Range:{" "}
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            Selected Date Range:{" "}
+            <Chip
+              label={selectedDateRange}
+              variant="outlined"
+              style={{ marginLeft: "8px" }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            Selected Targets:{" "}
+            {selectedTargets.map((target) => (
               <Chip
-                label={selectedDateRange}
+                key={target}
+                label={target}
                 variant="outlined"
                 style={{ marginLeft: "8px" }}
               />
-            </Grid>
-            <Grid item xs={12}>
-              Selected Targets:{" "}
-              {selectedTargets.map((target) => (
-                <Chip
-                  key={target}
-                  label={target}
-                  variant="outlined"
-                  style={{ marginLeft: "8px" }}
-                />
-              ))}
-            </Grid>
+            ))}
           </Grid>
         </Grid>
 

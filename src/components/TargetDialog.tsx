@@ -12,6 +12,7 @@ import {
   ListItemText,
   MenuItem,
   Select,
+  SelectChangeEvent, // SelectChangeEvent 임포트 추가
 } from "@mui/material";
 
 interface TargetDialogProps {
@@ -29,13 +30,9 @@ const TargetDialog: React.FC<TargetDialogProps> = ({
   onSelectedTargetsChange,
   onClose,
 }) => {
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: 48 * 4.5 + 8,
-        width: 250,
-      },
-    },
+  const handleChange = (event: SelectChangeEvent<string[]>) => {
+    // SelectChangeEvent<string[]> 형식으로 변경
+    onSelectedTargetsChange(event.target.value as string[]);
   };
 
   return (
@@ -43,16 +40,23 @@ const TargetDialog: React.FC<TargetDialogProps> = ({
       <DialogTitle>Select Target</DialogTitle>
       <DialogContent>
         <FormControl fullWidth>
-          <InputLabel>Select Target</InputLabel>
+          <InputLabel style={{ marginTop: 10, marginBottom: 10 }}>
+            Select Target
+          </InputLabel>
           <Select
             multiple
             value={selectedTargets}
-            onChange={(e) =>
-              onSelectedTargetsChange(e.target.value as string[])
-            }
+            onChange={handleChange}
             renderValue={(selected) => (selected as string[]).join(", ")}
             input={<Input />}
-            MenuProps={MenuProps}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  maxHeight: 300,
+                  width: 250,
+                },
+              },
+            }}
           >
             {targetList.map((target) => (
               <MenuItem key={target} value={target}>
