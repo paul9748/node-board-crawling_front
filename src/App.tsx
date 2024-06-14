@@ -10,8 +10,6 @@ import SearchResults from "./components/SearchResults";
 
 function App() {
   const theme = createTheme(getLPTheme("light"));
-  // 기존의 하드코딩된 targetOptions 제거
-  // const targetOptions = ["Community1", "Community2", "Community3"];
 
   const today = new Date().toISOString().slice(0, 16);
 
@@ -25,7 +23,7 @@ function App() {
   const [defaultStartDate, setDefaultStartDate] = useState("");
   const [selectedDateRange, setSelectedDateRange] = useState("");
   const [targetList, setTargetList] = useState<string[]>([]);
-  const [searched, setSearched] = useState(false); // 검색 버튼을 클릭했는지 여부를 나타내는 상태
+  const [searched, setSearched] = useState(false);
   const [analysisData, setAnalysisData] = useState<any[]>([]);
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
@@ -50,7 +48,7 @@ function App() {
 
   const fetchTargetList = () => {
     setLoadingTargets(true);
-    fetch("http://localhost:3000/test6")
+    fetch(`${window.location.origin}:${process.env.APIPORT}/siteNameList`)
       .then((response) => response.json())
       .then((data) => {
         const targetOptions = data.map((item: any) => item.siteName);
@@ -65,22 +63,28 @@ function App() {
 
   const handleSearch = () => {
     if (!searchKeyword) {
-      //error popup "keyword can not null"
-      alert("keyword can not null");
+      alert("keyword cannot be null");
     } else {
-      // 검색 요청
       setSelectedDateRange(`${startDate} ~ ${endDate}`);
-      let search_data = `http://localhost:3000/test2?keyword=${searchKeyword}`;
-      if (startDate) {
-        search_data += `&startDate=${startDate}`;
+      const searchParams = new URLSearchParams({
+        keyword: searchKeyword,
+        startDate,
+        endDate,
+        page: "0",
+      });
+      if (selectedTargets.length > 0) {
+        selectedTargets.forEach((target) =>
+          searchParams.append("siteNames", target)
+        );
       }
-      if (endDate) {
-        search_data += `&endDate=${endDate}`;
-      }
-      fetch(search_data)
+
+      const search_url = `${window.location.origin}:${
+        process.env.APIPORT
+      }/searchData?${searchParams.toString()}`;
+
+      fetch(search_url)
         .then((response) => response.json())
         .then((data) => {
-          // 받은 데이터 중 검색 결과와 분석 정보를 추출하여 상태에 저장
           setSearchResults(data.posts);
           setAnalysisData(data.analysis);
           setSearched(true);
@@ -118,9 +122,9 @@ function App() {
                 alt="Logo"
                 style={{
                   marginRight: "10px",
-                  width: "40px", // 원하는 너비로 조절
-                  height: "40px", // 원하는 높이로 조절
-                  borderRadius: "50%", // 둥근 모서리
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
                 }}
               />
               test_name
@@ -218,7 +222,13 @@ function App() {
         {searched && (
           <>
             <AnalysisInfo analysisData={analysisData} />
-            <SearchResults searchResults={searchResults} />
+            <SearchResults
+              initialResults={searchResults}
+              keyword={searchKeyword}
+              startDate={startDate}
+              endDate={endDate}
+              selectedTargets={selectedTargets}
+            />
           </>
         )}
         <DateRangeDialog

@@ -26,6 +26,25 @@ class AnalysisInfo extends React.Component<AnalysisInfoProps> {
   render() {
     const { analysisData } = this.props;
 
+    // 검색 결과가 없는 경우
+    if (analysisData.length === 0) {
+      return (
+        <Grid container justifyContent="center">
+          <Grid item xs={12}>
+            <Typography variant="h6" align="center">
+              Emotion Analysis
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" align="center">
+              No analysis data available.
+            </Typography>
+          </Grid>
+        </Grid>
+      );
+    }
+
+    // 검색 결과가 있는 경우
     return (
       <Grid container justifyContent="center">
         <Grid item xs={12}>

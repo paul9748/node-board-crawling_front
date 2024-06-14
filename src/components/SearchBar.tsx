@@ -38,12 +38,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
               backgroundColor: "#fff",
               borderRadius: "4px",
             }} // 둥근 테두리 추가
-            InputLabelProps={{
-              style: { color: "#000" }, // 입력창 라벨 색상
-            }}
-            InputProps={{
-              style: { color: "#000", borderRadius: "4px" }, // 입력 텍스트 색상과 둥근 테두리 추가
-            }}
           />
         </Grid>
         <Grid item xs={2}>
