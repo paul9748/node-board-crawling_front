@@ -20,7 +20,7 @@ function App() {
   const [openTargetDialog, setOpenTargetDialog] = useState(false);
   const [selectedTargets, setSelectedTargets] = useState<string[]>([]);
   const [loadingTargets, setLoadingTargets] = useState(false);
-  const [defaultStartDate, setDefaultStartDate] = useState("");
+  // const [defaultStartDate, setDefaultStartDate] = useState("");
   const [selectedDateRange, setSelectedDateRange] = useState("");
   const [targetList, setTargetList] = useState<string[]>([]);
   const [searched, setSearched] = useState(false);
@@ -31,8 +31,8 @@ function App() {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     setStartDate(sevenDaysAgo.toISOString().slice(0, 16));
-    const defaultStartDateFormat = sevenDaysAgo.toISOString().slice(0, 16);
-    setDefaultStartDate(defaultStartDateFormat);
+    // const defaultStartDateFormat = sevenDaysAgo.toISOString().slice(0, 16);
+    // setDefaultStartDate(defaultStartDateFormat);
   }, []);
 
   useEffect(() => {
@@ -48,7 +48,11 @@ function App() {
 
   const fetchTargetList = () => {
     setLoadingTargets(true);
-    fetch(`${window.location.origin}:${process.env.APIPORT}/siteNameList`)
+    fetch(
+      `http://${window.location.hostname}:${
+        import.meta.env.VITE_APIPORT
+      }/siteNameList`
+    )
       .then((response) => response.json())
       .then((data) => {
         const targetOptions = data.map((item: any) => item.siteName);
@@ -78,8 +82,8 @@ function App() {
         );
       }
 
-      const search_url = `${window.location.origin}:${
-        process.env.APIPORT
+      const search_url = `http://${window.location.hostname}:${
+        import.meta.env.VITE_APIPORT
       }/searchData?${searchParams.toString()}`;
 
       fetch(search_url)

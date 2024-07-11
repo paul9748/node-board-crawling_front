@@ -12,7 +12,9 @@ interface SearchResult {
   contentText: string;
 }
 
-const apiUrl = `${window.location.origin}:${process.env.APIPORT}/searchDataPage`; // 실제 API URL로 교체
+const apiUrl = `http://${window.location.hostname}:${
+  import.meta.env.VITE_APIPORT
+}/searchDataPage`; // 실제 API URL로 교체
 
 function SearchResults({
   initialResults,
