@@ -49,7 +49,7 @@ function App() {
   const fetchTargetList = () => {
     setLoadingTargets(true);
     fetch(
-      `http://${window.location.hostname}:${
+      `http://${import.meta.env.VITE_APIURL}:${
         import.meta.env.VITE_APIPORT
       }/siteNameList`
     )
@@ -82,7 +82,7 @@ function App() {
         );
       }
 
-      const search_url = `http://${window.location.hostname}:${
+      const search_url = `http://${import.meta.env.VITE_APIURL}:${
         import.meta.env.VITE_APIPORT
       }/searchData?${searchParams.toString()}`;
 
