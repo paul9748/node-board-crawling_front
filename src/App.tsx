@@ -131,7 +131,7 @@ function App() {
                   borderRadius: "50%",
                 }}
               />
-              test_name
+              DataBandit
             </Typography>
           </Toolbar>
         </AppBar>
